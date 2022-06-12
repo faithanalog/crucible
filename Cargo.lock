@@ -541,7 +541,7 @@ dependencies = [
  "toml",
  "tracing",
  "usdt",
- "uuid 1.0.0",
+ "uuid 1.1.2",
  "version_check",
 ]
 
@@ -568,7 +568,7 @@ dependencies = [
  "slog",
  "subprocess",
  "tokio",
- "uuid 1.0.0",
+ "uuid 1.1.2",
 ]
 
 [[package]]
@@ -611,7 +611,7 @@ dependencies = [
  "tokio",
  "tokio-util 0.7.0",
  "toml",
- "uuid 1.0.0",
+ "uuid 1.1.2",
 ]
 
 [[package]]
@@ -628,7 +628,7 @@ dependencies = [
  "tokio-rustls",
  "toml",
  "twox-hash",
- "uuid 1.0.0",
+ "uuid 1.1.2",
 ]
 
 [[package]]
@@ -694,7 +694,7 @@ dependencies = [
  "tracing-opentelemetry",
  "tracing-subscriber",
  "usdt",
- "uuid 1.0.0",
+ "uuid 1.1.2",
  "version_check",
 ]
 
@@ -728,7 +728,7 @@ dependencies = [
  "httptest",
  "tempfile",
  "tokio",
- "uuid 1.0.0",
+ "uuid 1.1.2",
 ]
 
 [[package]]
@@ -771,7 +771,7 @@ dependencies = [
  "crucible-common",
  "serde",
  "tokio-util 0.7.0",
- "uuid 1.0.0",
+ "uuid 1.1.2",
 ]
 
 [[package]]
@@ -946,7 +946,7 @@ dependencies = [
  "tokio-rustls",
  "toml",
  "usdt",
- "uuid 1.0.0",
+ "uuid 1.1.2",
  "version_check",
 ]
 
@@ -1826,7 +1826,7 @@ dependencies = [
  "serde",
  "serde_json",
  "slog",
- "uuid 1.0.0",
+ "uuid 1.1.2",
 ]
 
 [[package]]
@@ -1993,7 +1993,7 @@ dependencies = [
  "thiserror",
  "tokio",
  "tokio-postgres",
- "uuid 1.0.0",
+ "uuid 1.1.2",
 ]
 
 [[package]]
@@ -2162,7 +2162,7 @@ dependencies = [
  "schemars",
  "serde",
  "thiserror",
- "uuid 1.0.0",
+ "uuid 1.1.2",
 ]
 
 [[package]]
@@ -2193,7 +2193,7 @@ dependencies = [
  "slog-dtrace",
  "thiserror",
  "tokio",
- "uuid 1.0.0",
+ "uuid 1.1.2",
 ]
 
 [[package]]
@@ -2406,7 +2406,7 @@ dependencies = [
  "chrono",
  "fallible-iterator",
  "postgres-protocol",
- "uuid 1.0.0",
+ "uuid 1.1.2",
 ]
 
 [[package]]
@@ -2963,7 +2963,7 @@ dependencies = [
  "serde",
  "serde_json",
  "uuid 0.8.2",
- "uuid 1.0.0",
+ "uuid 1.1.2",
 ]
 
 [[package]]
@@ -3342,7 +3342,7 @@ dependencies = [
  "slog",
  "thiserror",
  "tokio",
- "uuid 1.0.0",
+ "uuid 1.1.2",
 ]
 
 [[package]]
@@ -4120,9 +4120,9 @@ checksum = "bc5cf98d8186244414c848017f0e2676b3fcb46807f6668a97dfe67359a3c4b7"
 
 [[package]]
 name = "uuid"
-version = "1.0.0"
+version = "1.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8cfcd319456c4d6ea10087ed423473267e1a071f3bc0aa89f80d60997843c6f0"
+checksum = "dd6469f4314d5f1ffec476e05f17cc9a78bc7a27a6a857842170bdf8d6f98d2f"
 dependencies = [
  "getrandom",
  "serde",
