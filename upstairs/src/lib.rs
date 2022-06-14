@@ -54,7 +54,7 @@ pub use block_io::{FileBlockIO, ReqwestBlockIO};
 
 mod mend;
 pub use mend::{DownstairsMend, ExtentFix, RegionMetadata};
-pub use pseudo_file::CruciblePseudoFile;
+pub use pseudo_file::{CruciblePseudoFile, IOSpan};
 
 pub trait BlockIO {
     fn activate(&self, gen: u64) -> Result<(), CrucibleError>;

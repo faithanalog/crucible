@@ -1,7 +1,7 @@
 [package]
 name = "crucible-nbd-server"
 version = "0.1.0"
-authors = ["Joshua M. Clulow <jmc@oxide.computer>", "Alan Hanson <alan@oxide.computer>", "James MacMahon <james@oxide.computer>"]
+authors = ["Joshua M. Clulow <jmc@oxide.computer>", "Alan Hanson <alan@oxide.computer>", "James MacMahon <james@oxide.computer>", "Artemis Everfree <artemis@artemis.sh>"]
 license = "MPL-2.0"
 edition = "2018"
 
@@ -21,4 +21,10 @@ structopt = "0.3"
 tokio = { version = "1.18.1", features = ["full"] }
 tokio-util = { version = "0.7", features = ["codec"]}
 toml = "0.5"
-nbd = "0.2.3"
+async-trait = "0.1.53"
+uuid = "1.1.0"
+nbdkit = "0.2.0"
+lazy_static = "1.4.0"
+
+[lib]
+crate-type = ["cdylib"]
