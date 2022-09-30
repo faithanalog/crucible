@@ -143,7 +143,7 @@ impl Inner {
         // NOTE: "ORDER BY RANDOM()" would be a good --lossy addition here
         let stmt = "SELECT block, nonce, tag FROM encryption_context \
              WHERE block BETWEEN ?1 AND ?2 \
-             ORDER BY counter ASC";
+             ORDER BY ROWID ASC";
         let mut stmt = self.metadb.prepare_cached(stmt)?;
 
         let stmt_iter =
@@ -176,7 +176,7 @@ impl Inner {
         // NOTE: "ORDER BY RANDOM()" would be a good --lossy addition here
         let stmt = "SELECT block, hash FROM integrity_hashes \
              WHERE block BETWEEN ?1 AND ?2 \
-             ORDER BY counter ASC";
+             ORDER BY ROWID ASC";
         let mut stmt = self.metadb.prepare_cached(stmt)?;
 
         let stmt_iter =
@@ -214,9 +214,8 @@ impl Inner {
         let (block, encryption_context) = encryption_context_params;
 
         let stmt =
-            "INSERT INTO encryption_context (counter, block, nonce, tag) \
+            "INSERT INTO encryption_context (block, nonce, tag) \
              VALUES ( \
-                 (SELECT IFNULL(MAX(counter), 0) + 1 FROM encryption_context WHERE block=?1), \
                  ?1, ?2, ?3 \
              )";
 
@@ -260,9 +259,8 @@ impl Inner {
         let (block, hash) = hash_params;
 
         let stmt =
-            "INSERT INTO integrity_hashes (counter, block, hash) \
+            "INSERT INTO integrity_hashes (block, hash) \
              VALUES ( \
-                 (SELECT IFNULL(MAX(counter), 0) + 1 FROM integrity_hashes WHERE block=?1), \
                  ?1, ?2 \
              )";
 
@@ -295,80 +293,24 @@ impl Inner {
         let tx = self.metadb.transaction()?;
 
         // Clear encryption context
-        let stmt = "DELETE FROM encryption_context WHERE ROWID not in \
-             (select ROWID from \
-                 (select ROWID,block,MAX(counter) \
-                  from encryption_context group by block\
-                 ) \
+        let stmt = "DELETE FROM encryption_context WHERE ROWID NOT IN \
+             ( \
+                select max(ROWID) from encryption_context GROUP BY block \
              )";
 
         let _rows_affected = tx.prepare_cached(stmt)?.execute([])?;
-
-        let _rows_affected = tx
-            .prepare_cached("UPDATE encryption_context SET counter = 0")?
-            .execute([])?;
 
         // Clear integrity hash
-        let stmt = "DELETE FROM integrity_hashes WHERE ROWID not in \
-             (select ROWID from \
-                 (select ROWID,block,MAX(counter) \
-                  from integrity_hashes group by block \
-                 ) \
+        let stmt = "DELETE FROM integrity_hashes WHERE ROWID NOT IN \
+             ( \
+                select max(ROWID) from integrity_hashes GROUP BY block \
              )";
 
         let _rows_affected = tx.prepare_cached(stmt)?.execute([])?;
-
-        let _rows_affected = tx
-            .prepare_cached("UPDATE integrity_hashes SET counter = 0")?
-            .execute([])?;
 
         tx.commit()?;
 
         Ok(())
-    }
-
-    /*
-     * In order to unit test truncate_encryption_contexts_and_hashes, return
-     * blocks and counters.
-     */
-    #[cfg(test)]
-    fn get_blocks_and_counters_for_encryption_context(
-        &mut self,
-    ) -> Result<Vec<(u64, u64)>> {
-        let mut stmt = self
-            .metadb
-            .prepare_cached("SELECT block, counter FROM encryption_context")?;
-
-        let stmt_iter =
-            stmt.query_map(params![], |row| Ok((row.get(0)?, row.get(1)?)))?;
-
-        let mut results = Vec::new();
-
-        for row in stmt_iter {
-            results.push(row?);
-        }
-
-        Ok(results)
-    }
-
-    #[cfg(test)]
-    fn get_blocks_and_counters_for_hashes(
-        &mut self,
-    ) -> Result<Vec<(u64, u64)>> {
-        let mut stmt = self
-            .metadb
-            .prepare_cached("SELECT block, counter FROM integrity_hashes")?;
-
-        let stmt_iter =
-            stmt.query_map(params![], |row| Ok((row.get(0)?, row.get(1)?)))?;
-
-        let mut results = Vec::new();
-
-        for row in stmt_iter {
-            results.push(row?);
-        }
-
-        Ok(results)
     }
 }
 
@@ -805,21 +747,17 @@ impl Extent {
 
             metadb.execute(
                 "CREATE TABLE encryption_context (
-                    counter INTEGER,
                     block INTEGER,
                     nonce BLOB NOT NULL,
-                    tag BLOB NOT NULL,
-                    PRIMARY KEY (block, counter)
+                    tag BLOB NOT NULL
                 )",
                 [],
             )?;
 
             metadb.execute(
                 "CREATE TABLE integrity_hashes (
-                    counter INTEGER,
                     block INTEGER,
-                    hash BLOB NOT NULL,
-                    PRIMARY KEY (block, counter)
+                    hash BLOB NOT NULL
                 )",
                 [],
             )?;
@@ -2956,13 +2894,6 @@ mod test {
         assert_eq!(ctxs[0].nonce, blob1);
         assert_eq!(ctxs[0].tag, blob2);
 
-        // Assert counters were reset to zero
-        for (_block, counter) in
-            inner.get_blocks_and_counters_for_encryption_context()?
-        {
-            assert_eq!(counter, 0);
-        }
-
         Ok(())
     }
 
@@ -3065,11 +2996,6 @@ mod test {
         assert_eq!(hashes.len(), 1);
 
         assert_eq!(hashes[0], blob1);
-
-        // Assert counters were reset to zero
-        for (_block, counter) in inner.get_blocks_and_counters_for_hashes()? {
-            assert_eq!(counter, 0);
-        }
 
         Ok(())
     }
