@@ -213,8 +213,7 @@ impl Inner {
     ) -> Result<()> {
         let (block, encryption_context) = encryption_context_params;
 
-        let stmt =
-            "INSERT INTO encryption_context (block, nonce, tag) \
+        let stmt = "INSERT INTO encryption_context (block, nonce, tag) \
              VALUES ( \
                  ?1, ?2, ?3 \
              )";
@@ -258,8 +257,7 @@ impl Inner {
     ) -> Result<()> {
         let (block, hash) = hash_params;
 
-        let stmt =
-            "INSERT INTO integrity_hashes (block, hash) \
+        let stmt = "INSERT INTO integrity_hashes (block, hash) \
              VALUES ( \
                  ?1, ?2 \
              )";
